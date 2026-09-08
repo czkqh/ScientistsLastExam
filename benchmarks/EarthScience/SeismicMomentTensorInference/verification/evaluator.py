@@ -32,7 +32,8 @@ def _tensor(seed, kind):
         a /= np.linalg.norm(a); b -= a * np.dot(a, b); b /= np.linalg.norm(b)
         M = np.outer(a, b) + np.outer(b, a) + 0.75 * np.eye(3)
     M /= max(np.linalg.norm(M), 1e-12)
-    return np.asarray((M[0, 0], M[1, 1], M[2, 2], M[0, 1], M[0, 2], M[1, 2])), float(rng.uniform(12.0, 48.0)), 3.2
+    return (np.asarray((M[0, 0], M[1, 1], M[2, 2], M[0, 1], M[0, 2], M[1, 2])),
+            float(rng.uniform(12.0, 48.0)), float(rng.uniform(2.8, 3.6)))
 
 
 def _matrix(v):
@@ -92,7 +93,8 @@ class _World:
         if self.used + cost > BUDGET:
             self.failed = "budget exceeded"; raise ValueError(self.failed)
         self.used += cost; self.calls += 1
-        amp, arr = _radiation(self.tensor, self.depth, xy, wave_type)
+        scaled_tensor = self.tensor * (10.0 ** (self.magnitude - 3.2))
+        amp, arr = _radiation(scaled_tensor, self.depth, xy, wave_type)
         rng = np.random.default_rng(_seed(self.seed, self.calls, xy, wave_type))
         amp_noise, time_noise = 0.006, 0.045
         amp_obs = amp + rng.normal(0.0, amp_noise, len(xy))
@@ -131,7 +133,8 @@ def _quality(world, tensor, depth, magnitude, records):
     if not records: return 0.0
     residuals = []
     for row in records:
-        pred_a, pred_t = _radiation(tensor, depth, row["station_xy_km"], row["wave_type"])
+        scaled_tensor = tensor * (10.0 ** (magnitude - 3.2))
+        pred_a, pred_t = _radiation(scaled_tensor, depth, row["station_xy_km"], row["wave_type"])
         residuals.extend(((pred_a - row["amplitude"]) / 0.02).tolist())
         residuals.extend(((pred_t - row["p_arrival_s"]) / 0.15).tolist())
     fit_q = math.exp(-0.5 * float(np.mean(np.asarray(residuals) ** 2)))

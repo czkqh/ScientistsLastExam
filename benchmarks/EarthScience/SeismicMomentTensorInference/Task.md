@@ -34,6 +34,20 @@ standard deviation `0.045 s`. `wave_type` is one string and both budget fields a
 integers. Moment components use an arbitrary but fixed normalized scale. The six output keys
 above are the complete submission contract.
 
+The source is fixed horizontally at the profile origin. For a station `(x,y)`, depth `d`,
+distance `r = sqrt(x^2+y^2+d^2)`, ray direction `n=(x,y,-d)/r`, symmetric tensor `M`, and
+horizontal transverse direction `t=(-n_y,n_x,0)/sqrt(n_x^2+n_y^2)`, the public forward model is
+
+```text
+A_P = 9000 * 10^(magnitude-3.2) * (n^T M n) / r^2
+A_S = 9000 * 10^(magnitude-3.2) * (t^T M n) / r^2
+T_P = r / 6.0,                 T_S = r / 3.5.
+```
+
+Supported `M` is a trace-free double-couple tensor normalized to unit Frobenius norm. Hidden
+depths span 12-48 km and magnitudes span 2.8-3.6. Independent Gaussian noise has the disclosed
+standard deviations. The tensor carries mechanism orientation while `magnitude` carries scale.
+
 ## Scoring
 
 The development `combined_score` is a continuous normalized mean of moment-tensor recovery,

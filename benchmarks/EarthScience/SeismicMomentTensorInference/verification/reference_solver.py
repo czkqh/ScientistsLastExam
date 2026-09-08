@@ -39,18 +39,21 @@ def infer_source(station_bounds, wave_types, observe, budget_units):
         norm = np.linalg.norm(raw)
         return raw / max(norm, 1e-12)
     def residual(q):
-        v, depth = physical(q), q[6]
+        v, depth, magnitude = physical(q), q[6], q[7]
+        scaled = v * (10.0 ** (magnitude - 3.2))
         out = []
         for row in records:
-            pa, pt = _radiation(v, depth, row["station_xy_km"], row["wave_type"])
+            pa, pt = _radiation(scaled, depth, row["station_xy_km"], row["wave_type"])
             out.extend(((pa - row["amplitude"]) / 0.02).tolist())
             out.extend(((pt - row["p_arrival_s"]) / 0.15).tolist())
         return np.asarray(out)
-    best = least_squares(residual, np.r_[np.zeros(6), 30.0], bounds=(np.r_[np.full(6, -3.0), 5.0], np.r_[np.full(6, 3.0), 100.0]), max_nfev=180)
-    tensor, depth = physical(best.x), float(best.x[6])
+    best = least_squares(residual, np.r_[np.zeros(6), 30.0, 3.2],
+                         bounds=(np.r_[np.full(6, -3.0), 5.0, 2.0],
+                                 np.r_[np.full(6, 3.0), 100.0, 4.5]), max_nfev=240)
+    tensor, depth, magnitude = physical(best.x), float(best.x[6]), float(best.x[7])
     norm = float(np.linalg.norm(tensor))
     rms = float(np.sqrt(np.mean(residual(best.x) ** 2)))
     if not np.isfinite(norm) or norm < 1e-5 or rms > 2.5:
         return {"moment_tensor": np.zeros(6), "depth_km": 30.0, "magnitude": 0.0, "confidence": 0.0, "abstain": True}
-    return {"moment_tensor": tensor, "depth_km": depth, "magnitude": 3.2,
+    return {"moment_tensor": tensor, "depth_km": depth, "magnitude": magnitude,
             "confidence": float(math.exp(-0.5 * np.mean(residual(best.x) ** 2))), "abstain": False}
