@@ -99,7 +99,7 @@ class _World:
         arr_obs = arr + rng.normal(0.0, time_noise, len(xy))
         row = {"station_xy_km": xy.copy(), "wave_type": wave_type,
                "p_arrival_s": arr_obs, "amplitude": amp_obs,
-               "noise_std": {"amplitude": amp_noise, "p_arrival_s": time_noise},
+               "noise_std": np.full(len(xy), amp_noise),
                "budget_cost": cost, "budget_used": self.used}
         self.records.append(row)
         return {k: (v.copy() if isinstance(v, np.ndarray) else v) for k, v in row.items()}

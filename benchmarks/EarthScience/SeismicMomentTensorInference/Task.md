@@ -27,9 +27,12 @@ def infer_source(station_bounds, wave_types, observe, budget_units):
 The public `station_bounds` is `[[-300, 300], [-300, 300]]` km and `wave_types` is
 `["P", "S"]`. A request contains 4-12 distinct stations in the bounds and one wave type;
 its cost is `ceil(number_of_stations / 4)`. Total cost may not exceed `budget_units` (8).
-Observations contain one signed radiation amplitude and an arrival time per station. Moment
-components use an arbitrary but fixed normalized scale. The six output keys above are the
-complete submission contract.
+Observations contain one signed radiation amplitude and an arrival time per station.
+`station_xy_km` has shape `(n,2)`; `p_arrival_s`, `amplitude`, and `noise_std` are length-`n`
+arrays. `noise_std` is the pointwise amplitude standard deviation; arrival-time noise has public
+standard deviation `0.045 s`. `wave_type` is one string and both budget fields are scalar
+integers. Moment components use an arbitrary but fixed normalized scale. The six output keys
+above are the complete submission contract.
 
 ## Scoring
 
