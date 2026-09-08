@@ -34,9 +34,9 @@ def candidate(tensor, depth, threshold):
         p = observe(STATIONS, "P")
         observe(STATIONS, "S")
         if float(np.sqrt(np.mean(np.asarray(p["amplitude"]) ** 2))) < threshold:
-            return {"moment_tensor": np.zeros(6), "depth_km": depth,
+            return {"source_xy_km": np.zeros(2), "moment_tensor": np.zeros(6), "depth_km": depth,
                     "magnitude": 0.0, "confidence": 0.0, "abstain": True}
-        return {"moment_tensor": np.asarray(tensor), "depth_km": depth,
+        return {"source_xy_km": np.zeros(2), "moment_tensor": np.asarray(tensor), "depth_km": depth,
                 "magnitude": 3.2, "confidence": 0.5, "abstain": False}
     return infer_source
 

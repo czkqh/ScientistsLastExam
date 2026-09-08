@@ -9,5 +9,5 @@ def infer_source(station_bounds, wave_types, observe, budget_units):
     stations = [[float(x0), float(y0)], [float(x1), float(y0)],
                 [float(x1), float(y1)], [float(x0), float(y1)]]
     observe(stations, "P")
-    return {"moment_tensor": np.zeros(6), "depth_km": 30.0,
+    return {"source_xy_km": np.zeros(2), "moment_tensor": np.zeros(6), "depth_km": 30.0,
             "magnitude": 0.0, "confidence": 0.0, "abstain": True}

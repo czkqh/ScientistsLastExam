@@ -32,28 +32,29 @@ def infer_source(station_bounds, wave_types, observe, budget_units):
     # neither channel.  Refuse these before fitting the double-couple family.
     p_mean = float(np.mean(np.asarray(records[0]["amplitude"])))
     if (p_rms < 0.012) or (p_mean > 0.045 and p_rms > 0.055):
-        return {"moment_tensor": np.zeros(6), "depth_km": 30.0, "magnitude": 0.0, "confidence": 0.0, "abstain": True}
+        return {"source_xy_km": np.zeros(2), "moment_tensor": np.zeros(6), "depth_km": 30.0, "magnitude": 0.0, "confidence": 0.0, "abstain": True}
     def physical(q):
         raw = np.asarray(q[:6], dtype=float)
         raw[2] = -raw[0] - raw[1]
         norm = np.linalg.norm(raw)
         return raw / max(norm, 1e-12)
     def residual(q):
-        v, depth, magnitude = physical(q), q[6], q[7]
+        v, depth, magnitude, source_xy = physical(q), q[6], q[7], q[8:10]
         scaled = v * (10.0 ** (magnitude - 3.2))
         out = []
         for row in records:
-            pa, pt = _radiation(scaled, depth, row["station_xy_km"], row["wave_type"])
+            pa, pt = _radiation(scaled, depth, row["station_xy_km"], row["wave_type"], source_xy)
             out.extend(((pa - row["amplitude"]) / 0.02).tolist())
             out.extend(((pt - row["p_arrival_s"]) / 0.15).tolist())
         return np.asarray(out)
-    best = least_squares(residual, np.r_[np.zeros(6), 30.0, 3.2],
-                         bounds=(np.r_[np.full(6, -3.0), 5.0, 2.0],
-                                 np.r_[np.full(6, 3.0), 100.0, 4.5]), max_nfev=240)
+    best = least_squares(residual, np.r_[np.zeros(6), 30.0, 3.2, 0.0, 0.0],
+                         bounds=(np.r_[np.full(6, -3.0), 5.0, 2.0, -60.0, -60.0],
+                                 np.r_[np.full(6, 3.0), 100.0, 4.5, 60.0, 60.0]), max_nfev=320)
     tensor, depth, magnitude = physical(best.x), float(best.x[6]), float(best.x[7])
+    source_xy = np.asarray(best.x[8:10])
     norm = float(np.linalg.norm(tensor))
     rms = float(np.sqrt(np.mean(residual(best.x) ** 2)))
     if not np.isfinite(norm) or norm < 1e-5 or rms > 2.5:
-        return {"moment_tensor": np.zeros(6), "depth_km": 30.0, "magnitude": 0.0, "confidence": 0.0, "abstain": True}
-    return {"moment_tensor": tensor, "depth_km": depth, "magnitude": magnitude,
+        return {"source_xy_km": np.zeros(2), "moment_tensor": np.zeros(6), "depth_km": 30.0, "magnitude": 0.0, "confidence": 0.0, "abstain": True}
+    return {"source_xy_km": source_xy, "moment_tensor": tensor, "depth_km": depth, "magnitude": magnitude,
             "confidence": float(math.exp(-0.5 * np.mean(residual(best.x) ** 2))), "abstain": False}

@@ -21,7 +21,7 @@ HELD = ((3101, "double_couple"), (3102, "double_couple"), (3103, "double_couple"
 def _tensor(seed, kind):
     rng = np.random.default_rng(seed)
     if kind == "null":
-        return np.zeros(6), 28.0, 0.0
+        return np.zeros(6), 28.0, 0.0, rng.uniform(-60.0, 60.0, size=2)
     m = rng.normal(size=6)
     if kind == "double_couple":
         a, b = rng.normal(size=(2, 3))
@@ -33,7 +33,8 @@ def _tensor(seed, kind):
         M = np.outer(a, b) + np.outer(b, a) + 0.75 * np.eye(3)
     M /= max(np.linalg.norm(M), 1e-12)
     return (np.asarray((M[0, 0], M[1, 1], M[2, 2], M[0, 1], M[0, 2], M[1, 2])),
-            float(rng.uniform(12.0, 48.0)), float(rng.uniform(2.8, 3.6)))
+            float(rng.uniform(12.0, 48.0)), float(rng.uniform(2.8, 3.6)),
+            rng.uniform(-60.0, 60.0, size=2))
 
 
 def _matrix(v):
@@ -41,10 +42,11 @@ def _matrix(v):
     return np.asarray(((v[0], v[3], v[4]), (v[3], v[1], v[5]), (v[4], v[5], v[2])))
 
 
-def _radiation(tensor, depth, stations, wave):
+def _radiation(tensor, depth, stations, wave, source_xy=(0.0, 0.0)):
     M = _matrix(tensor)
     xy = np.asarray(stations, dtype=float)
-    rvec = np.column_stack((xy[:, 0], xy[:, 1], -np.full(len(xy), depth)))
+    delta = xy - np.asarray(source_xy, dtype=float)
+    rvec = np.column_stack((delta[:, 0], delta[:, 1], -np.full(len(xy), depth)))
     distance = np.linalg.norm(rvec, axis=1)
     n = rvec / distance[:, None]
     Mn = n @ M.T
@@ -72,7 +74,7 @@ def _seed(world_seed, call, stations, wave):
 class _World:
     def __init__(self, seed, kind):
         self.seed, self.kind = int(seed), str(kind)
-        self.tensor, self.depth, self.magnitude = _tensor(self.seed, self.kind)
+        self.tensor, self.depth, self.magnitude, self.source_xy = _tensor(self.seed, self.kind)
         self.calls, self.used, self.failed = 0, 0, None
         self.records = []
 
@@ -94,7 +96,7 @@ class _World:
             self.failed = "budget exceeded"; raise ValueError(self.failed)
         self.used += cost; self.calls += 1
         scaled_tensor = self.tensor * (10.0 ** (self.magnitude - 3.2))
-        amp, arr = _radiation(scaled_tensor, self.depth, xy, wave_type)
+        amp, arr = _radiation(scaled_tensor, self.depth, xy, wave_type, self.source_xy)
         rng = np.random.default_rng(_seed(self.seed, self.calls, xy, wave_type))
         amp_noise, time_noise = 0.006, 0.045
         amp_obs = amp + rng.normal(0.0, amp_noise, len(xy))
@@ -113,6 +115,9 @@ def _validate(out):
     if not isinstance(abstain, (bool, np.bool_)): raise ValueError("abstain must be boolean")
     tensor = np.asarray(out.get("moment_tensor"), dtype=float).ravel()
     if tensor.shape != (6,) or not np.all(np.isfinite(tensor)): raise ValueError("moment_tensor must contain six finite values")
+    source_xy = np.asarray(out.get("source_xy_km"), dtype=float).ravel()
+    if source_xy.shape != (2,) or np.any(~np.isfinite(source_xy)) or np.any(np.abs(source_xy) > 60.0):
+        raise ValueError("source_xy_km must contain two finite values in [-60,60]")
     depth = float(out.get("depth_km")); magnitude = float(out.get("magnitude")); confidence = float(out.get("confidence"))
     if not all(math.isfinite(x) for x in (depth, magnitude, confidence)) or not 0.0 <= confidence <= 1.0:
         raise ValueError("depth, magnitude and confidence must be finite; confidence in [0,1]")
@@ -120,32 +125,33 @@ def _validate(out):
         if np.max(np.abs(tensor)) > 1e-8: raise ValueError("abstention requires zero tensor")
     elif not (0.1 <= depth <= 100.0 and 0.0 <= magnitude <= 10.0):
         raise ValueError("claimed depth or magnitude outside bounds")
-    return tensor, depth, magnitude, confidence, bool(abstain)
+    return source_xy, tensor, depth, magnitude, confidence, bool(abstain)
 
 
-def _quality(world, tensor, depth, magnitude, records):
+def _quality(world, source_xy, tensor, depth, magnitude, records):
     if world.kind != "double_couple": return 1.0 if np.max(np.abs(tensor)) < 1e-8 else 0.0
     truth = world.tensor
     scale = max(np.linalg.norm(truth), 1e-9)
     tensor_q = math.exp(-0.5 * float(np.mean(((tensor - truth) / 0.10) ** 2)))
     depth_q = math.exp(-0.5 * ((depth - world.depth) / 3.0) ** 2)
     mag_q = math.exp(-0.5 * ((magnitude - world.magnitude) / 0.35) ** 2)
+    location_q = math.exp(-0.5 * float(np.mean(((source_xy - world.source_xy) / 8.0) ** 2)))
     if not records: return 0.0
     residuals = []
     for row in records:
         scaled_tensor = tensor * (10.0 ** (magnitude - 3.2))
-        pred_a, pred_t = _radiation(scaled_tensor, depth, row["station_xy_km"], row["wave_type"])
+        pred_a, pred_t = _radiation(scaled_tensor, depth, row["station_xy_km"], row["wave_type"], source_xy)
         residuals.extend(((pred_a - row["amplitude"]) / 0.02).tolist())
         residuals.extend(((pred_t - row["p_arrival_s"]) / 0.15).tolist())
     fit_q = math.exp(-0.5 * float(np.mean(np.asarray(residuals) ** 2)))
-    return float((tensor_q * depth_q * mag_q * fit_q) ** 0.25)
+    return float((tensor_q * depth_q * mag_q * location_q * fit_q) ** 0.20)
 
 
 def _run(fn, spec, split, index):
     world = _World(*spec)
     try:
         out = fn(STATION_BOUNDS.tolist(), list(WAVE_TYPES), world.observe, BUDGET)
-        tensor, depth, magnitude, confidence, abstain = _validate(out)
+        source_xy, tensor, depth, magnitude, confidence, abstain = _validate(out)
     except Exception as exc:
         return {"split": split, "world_index": index, "valid": False, "failure_kind": str(type(exc).__name__),
                 "kind": world.kind, "abstain": False, "claimed": False, "mechanism_quality": 0.0,
@@ -154,7 +160,7 @@ def _run(fn, spec, split, index):
     claimed = not abstain
     correct_refusal = (not supported) and abstain
     false_discovery = (not supported) and claimed
-    quality = _quality(world, tensor, depth, magnitude, world.records) if claimed else (1.0 if correct_refusal else 0.0)
+    quality = _quality(world, source_xy, tensor, depth, magnitude, world.records) if claimed else (1.0 if correct_refusal else 0.0)
     return {"split": split, "world_index": index, "valid": True, "failure_kind": "", "kind": world.kind,
             "abstain": abstain, "claimed": claimed, "mechanism_quality": quality,
             "correct_refusal": correct_refusal, "false_discovery": false_discovery,

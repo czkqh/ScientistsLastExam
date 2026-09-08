@@ -1,6 +1,6 @@
 schema_version: 2
 scientific_question: Can an actively designed small P/S network recover a local earthquake moment tensor and depth, while refusing null or isotropic sources outside the declared family?
-artifact: Six normalized symmetric moment-tensor components, hypocentral depth and magnitude, confidence, or an explicit abstention.
+artifact: Horizontal source location, six normalized symmetric moment-tensor components, hypocentral depth and magnitude, confidence, or an explicit abstention.
 oracle:
   model: deterministic point-source P/S radiation and travel-time simulator with seeded Gaussian amplitude and arrival noise
   feasibility: charged 4-12 station surveys in a 300 km square under an eight-unit budget; bounded finite tensor/depth output

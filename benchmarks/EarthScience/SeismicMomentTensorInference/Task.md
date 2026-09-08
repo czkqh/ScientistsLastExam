@@ -15,7 +15,7 @@ def infer_source(station_bounds, wave_types, observe, budget_units):
     """Return a source model or an explicit refusal.
 
     Return {"moment_tensor": [Mxx, Myy, Mzz, Mxy, Mxz, Myz],
-            "depth_km": float, "magnitude": float,
+      "source_xy_km": [x_km, y_km], "depth_km": float, "magnitude": float,
             "confidence": float in [0, 1], "abstain": bool}
 
     observe(stations, wave_type) returns a dictionary with keys
@@ -32,10 +32,11 @@ Observations contain one signed radiation amplitude and an arrival time per stat
 arrays. `noise_std` is the pointwise amplitude standard deviation; arrival-time noise has public
 standard deviation `0.045 s`. `wave_type` is one string and both budget fields are scalar
 integers. Moment components use an arbitrary but fixed normalized scale. The six output keys
-above are the complete submission contract.
+above are the complete seven-key submission contract.
 
-The source is fixed horizontally at the profile origin. For a station `(x,y)`, depth `d`,
-distance `r = sqrt(x^2+y^2+d^2)`, ray direction `n=(x,y,-d)/r`, symmetric tensor `M`, and
+The horizontal source location lies in `[-60,60]` km on each axis. For station position `s`,
+source position `q`, depth `d`, displacement `(dx,dy)=s-q`, distance
+`r = sqrt(dx^2+dy^2+d^2)`, ray direction `n=(dx,dy,-d)/r`, symmetric tensor `M`, and
 horizontal transverse direction `t=(-n_y,n_x,0)/sqrt(n_x^2+n_y^2)`, the public forward model is
 
 ```text
@@ -45,13 +46,14 @@ T_P = r / 6.0,                 T_S = r / 3.5.
 ```
 
 Supported `M` is a trace-free double-couple tensor normalized to unit Frobenius norm. Hidden
-depths span 12-48 km and magnitudes span 2.8-3.6. Independent Gaussian noise has the disclosed
-standard deviations. The tensor carries mechanism orientation while `magnitude` carries scale.
+locations span the public square, depths span 12-48 km and magnitudes span 2.8-3.6. Independent
+Gaussian noise has the disclosed standard deviations. The tensor carries mechanism orientation
+while `magnitude` carries scale.
 
 ## Scoring
 
 The development `combined_score` is a continuous normalized mean of moment-tensor recovery,
-depth error, magnitude error and waveform prediction on held-out azimuths. Two unsupported
+horizontal location, depth, magnitude and waveform prediction on held-out azimuths. Two unsupported
 worlds are included: a null signal and an isotropic-plus-double-couple source outside the
 declared family. Correct abstention is
 rewarded; false discovery, invalid output, or budget overspend scores zero. Mechanism,
@@ -63,7 +65,8 @@ exactly zero. Held-out stations, arrival residuals and shifted noise are evaluat
 - Only edit `solution.py`; keep the `infer_source` signature and all output key names.
 - Use deterministic Python, NumPy and SciPy only. Do not read `verification/` or
   `frontier_eval/`, use the network, or create processes.
-- A non-abstaining tensor must have six finite values, positive finite depth and magnitude, and
+- A non-abstaining result must have two finite bounded `source_xy_km` values, six finite tensor
+  values, positive finite depth and magnitude, and
   confidence in `[0,1]`. If the measurements do not support the declared double-couple family,
   abstain with a zero tensor.
 - `sle.contract_lint` is importable and free to call for shape checks.
