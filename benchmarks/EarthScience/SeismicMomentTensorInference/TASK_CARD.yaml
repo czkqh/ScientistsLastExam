@@ -1,5 +1,5 @@
 schema_version: 2
-scientific_question: Can an actively designed small P/S network recover a local earthquake moment tensor and depth, while refusing isotropic or geometrically unidentifiable sources?
+scientific_question: Can an actively designed small P/S network recover a local earthquake moment tensor and depth, while refusing null or isotropic sources outside the declared family?
 artifact: Six normalized symmetric moment-tensor components, hypocentral depth and magnitude, confidence, or an explicit abstention.
 oracle:
   model: deterministic point-source P/S radiation and travel-time simulator with seeded Gaussian amplitude and arrival noise
@@ -7,7 +7,7 @@ oracle:
   deterministic: true
 normalization:
   baseline: one four-station P-wave corner survey followed by abstention
-  reference: bounded nonlinear least-squares P/S inversion with adaptive azimuthal coverage and refusal on unsupported sources
+  reference: bounded nonlinear least-squares P/S inversion with broad azimuthal coverage and refusal on unsupported sources
   score: development mechanism quality normalized above all-abstain; held-out prediction, refusal, false discovery and coverage are separate
 citations:
   - id: doi:10.1016/j.epsl.2015.02.022
@@ -40,10 +40,12 @@ lineage:
   builder_scaffolds:
     - hand-authored-active-seismic-inversion-v1
   calibrator_model_ids:
-    - not_run
-  calibration_runs: []
-  calibration_evidence_status: missing
-  edits_triggered_by_model: No frontier model draw has yet altered the oracle or contract.
+    - deepseek-v4-flash
+    - deepseek-v4-pro
+  calibration_runs:
+    - experiments/deepseek_seismic_moment_tensor_calibration_2026-09-08.json
+  calibration_evidence_status: current_or_migration_replayed
+  edits_triggered_by_model: Two initial runtime failures exposed an underspecified noise_std container; its public shape was documented and changed to a length-n array before admitted calibration draws.
   shortcut_discoverer: deterministic_manual_probe
   frozen_before_eval: false
   freeze_timestamp: null

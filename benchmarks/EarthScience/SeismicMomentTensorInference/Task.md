@@ -38,8 +38,8 @@ above are the complete submission contract.
 
 The development `combined_score` is a continuous normalized mean of moment-tensor recovery,
 depth error, magnitude error and waveform prediction on held-out azimuths. Two unsupported
-worlds are included: an isotropic-plus-double-couple source outside the declared family and a
-nearly collinear station geometry whose tensor is not identifiable. Correct abstention is
+worlds are included: a null signal and an isotropic-plus-double-couple source outside the
+declared family. Correct abstention is
 rewarded; false discovery, invalid output, or budget overspend scores zero. Mechanism,
 false-discovery, refusal and attempted-discovery rates are reported separately; all-abstain is
 exactly zero. Held-out stations, arrival residuals and shifted noise are evaluator-only.
@@ -50,8 +50,8 @@ exactly zero. Held-out stations, arrival residuals and shifted noise are evaluat
 - Use deterministic Python, NumPy and SciPy only. Do not read `verification/` or
   `frontier_eval/`, use the network, or create processes.
 - A non-abstaining tensor must have six finite values, positive finite depth and magnitude, and
-  confidence in `[0,1]`. If public geometry cannot identify a supported source, abstain with a
-  zero tensor.
+  confidence in `[0,1]`. If the measurements do not support the declared double-couple family,
+  abstain with a zero tensor.
 - `sle.contract_lint` is importable and free to call for shape checks.
 
 ## Relationship to nearby tasks

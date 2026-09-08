@@ -7,15 +7,17 @@ patterns and differential arrivals provide complementary constraints on mechanis
 ## Oracle and normalization
 The frozen oracle uses a deterministic point-source radiation model with inverse-distance
 amplitude, P/S velocity-dependent arrivals, Gaussian noise seeded from the world and query,
-and a rank/condition check for identifiability. The clipped score is normalized from the
+and a source-family check. The clipped score is normalized from the
 all-abstain baseline to an exact supported-family reference; refusal and false-discovery rates
 remain separate. This is a reduced-order benchmark, not field deployment.
 
 ## Baseline and reference
 The baseline spends one P-wave survey and abstains on every world, so combined score is 0. The
-reference performs two azimuthally diverse surveys, solves bounded nonlinear least squares, and
-abstains when the design matrix is rank deficient or the isotropic term is inconsistent with the
-supported family. Development/held-out values are recomputed after final freeze.
+reference performs two azimuthally diverse surveys, solves bounded nonlinear least squares,
+and abstains when the signal is null or the isotropic P-wave offset is inconsistent with the
+supported family. On the frozen executable revision it scores `0.864846` development and
+`0.824390` held-out, with zero false discovery and complete unsupported-world refusal on both
+splits. The baseline scores `0.000000` on both splits.
 
 ## Ablations and shortcuts
 P-only fitting loses depth/magnitude separation; a single azimuth loses off-diagonal tensor
@@ -23,9 +25,12 @@ components; ignoring arrival time loses depth. A fixed four-corner survey is inf
 adaptive radial coverage. Public procedural worlds require a future server-held split.
 
 ## Model calibration
-No paid frontier-model draw is included in this initial fork. DeepSeek Flash/Pro calibration
-must record exact model ID, seed, proposal budget, thinking-disabled condition, valid proposal
-count, split scores, and failure category without storing prompts or generated programs.
+Thinking-disabled `deepseek-v4-flash` (seed 43) and `deepseek-v4-pro` (seed 42) each produced one
+valid first proposal at budget one. Both scored `0.000000`, below the reference's `0.864846`.
+Earlier seed-41 draws and a Flash seed-42 draw are protocol diagnostics only: an underspecified
+`noise_std` container caused two runtime failures, then Flash generated syntactically incomplete
+code under an 8k output limit. The public container shape was fixed before the admitted draws;
+the Flash admitted draw used a local 16k output limit. See the compact experiment record.
 
 ## Construction and review
 This fills the EarthScience x WavePropagation discovery/parameter-inversion gap and is distinct
