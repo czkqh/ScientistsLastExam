@@ -26,6 +26,12 @@ def infer_source(station_bounds, wave_types, observe, budget_units):
     stations = [[-260.0, -40.0], [-180.0, 180.0], [0.0, 260.0], [190.0, 170.0],
                 [270.0, -20.0], [140.0, -210.0], [-40.0, -260.0], [-220.0, -180.0]]
     records = [observe(stations, "P"), observe(stations, "S")]
+    p_rms = float(np.sqrt(np.mean(np.asarray(records[0]["amplitude"]) ** 2)))
+    s_rms = float(np.sqrt(np.mean(np.asarray(records[1]["amplitude"]) ** 2)))
+    # An isotropic source has no transverse S radiation in this public model; a null has
+    # neither channel.  Refuse these before fitting the double-couple family.
+    if (p_rms < 0.012) or (s_rms < 0.012 and p_rms > 0.012):
+        return {"moment_tensor": np.zeros(6), "depth_km": 30.0, "magnitude": 0.0, "confidence": 0.0, "abstain": True}
     def physical(q):
         raw = np.asarray(q[:6], dtype=float)
         raw[2] = -raw[0] - raw[1]
