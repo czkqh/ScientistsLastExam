@@ -8,9 +8,10 @@ def _matrix(v):
     return np.asarray(((v[0], v[3], v[4]), (v[3], v[1], v[5]), (v[4], v[5], v[2])))
 
 
-def _radiation(v, depth, stations, wave):
+def _radiation(v, depth, stations, wave, source_xy=(0.0, 0.0)):
     M = _matrix(v); xy = np.asarray(stations, float)
-    rv = np.column_stack((xy[:, 0], xy[:, 1], -np.full(len(xy), depth)))
+    delta = xy - np.asarray(source_xy, dtype=float)
+    rv = np.column_stack((delta[:, 0], delta[:, 1], -np.full(len(xy), depth)))
     dist = np.linalg.norm(rv, axis=1); n = rv / dist[:, None]; mn = n @ M.T
     p = np.einsum("ij,ij->i", n, mn)
     if wave == "P":
