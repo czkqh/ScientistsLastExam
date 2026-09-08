@@ -10,10 +10,10 @@ normalization:
   reference: bounded nonlinear least-squares P/S inversion with broad azimuthal coverage and refusal on unsupported sources
   score: development mechanism quality normalized above all-abstain; held-out prediction, refusal, false discovery and coverage are separate
 citations:
-  - id: doi:10.1016/j.epsl.2015.02.022
-    title: Moment tensor inversion for near-surface events
-  - id: doi:10.1111/j.1365-246X.1987.tb05275.x
-    title: Quantitative seismology and source radiation
+  - id: doi:10.1785/0220170273
+    title: 'MTfit: A Bayesian Approach to Seismic Moment Tensor Inversion'
+  - id: doi:10.1785/0120120097
+    title: Resolvability of Isotropic Component in Regional Seismic Moment Tensor Inversion
 invariants:
   - identical candidate calls produce byte-stable world noise and scores
   - P radiation is n-transpose-M-n and S radiation is a transverse projection of M-n
@@ -21,7 +21,7 @@ invariants:
   - malformed returns, callback errors and budget overspend score invalid without evaluator crashes
   - isotropic and null worlds reward abstention and count false discoveries with an explicit denominator
   - held-out mechanism and prediction diagnostics are not search-visible
-known_shortcuts: A four-corner P-only survey cannot identify all off-diagonal components or separate depth from magnitude. The reduced-order point-source model omits finite-fault, attenuation and 3-D structure; server-held stations, full waveform modeling and independent seismological review are required before certification.
+known_shortcuts: A 192-strategy grid over six constant focal mechanisms, eight depths and four amplitude thresholds peaks at 0.000 development score. P-only or single-azimuth refusal ablations also score 0. The reduced-order point-source model omits finite-fault, attenuation and 3-D structure; server-held stations, full waveform modeling and independent seismological review are required before certification.
 review:
   domain: pending_external_seismology_review
   evaluator_security: deterministic_sandbox_callback_and_bad_candidate_tests
@@ -45,7 +45,7 @@ lineage:
   calibration_runs:
     - experiments/deepseek_seismic_moment_tensor_calibration_2026-09-08.json
   calibration_evidence_status: current_or_migration_replayed
-  edits_triggered_by_model: Two initial runtime failures exposed an underspecified noise_std container; its public shape was documented and changed to a length-n array before admitted calibration draws.
+  edits_triggered_by_model: Two initial runtime failures exposed an underspecified noise_std container, which was documented and changed to a length-n array. A pre-freeze Pro first proposal then scored 0.982 when the source was fixed at the origin, triggering the scientifically material joint horizontal-location redesign before final calibration.
   shortcut_discoverer: deterministic_manual_probe
   frozen_before_eval: false
   freeze_timestamp: null

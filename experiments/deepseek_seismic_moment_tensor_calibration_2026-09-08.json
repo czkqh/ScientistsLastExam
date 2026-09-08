@@ -2,12 +2,12 @@
   "schema_version": 1,
   "evidence_scope": "MODEL_CALIBRATION_NOT_POPULATION_PERFORMANCE",
   "task": "WavePropagation/SeismicMomentTensorInference",
-  "source_revision": "8292f34d1",
+  "source_revision": "593775c2b",
   "source_tree_dirty": true,
   "trusted_secure_eval": true,
   "algorithm": "greedy_rewrite",
   "feedback_mode": "normal",
-  "proposal_budget": 1,
+  "proposal_budget": 3,
   "wire": "chat",
   "chat_thinking": "disabled",
   "baseline": {
@@ -15,8 +15,8 @@
     "valid": 1.0
   },
   "reference": {
-    "development_mechanism_score": 0.8648455278128936,
-    "heldout_mechanism_score": 0.8243898900421698,
+    "development_mechanism_score": 0.904003567396646,
+    "heldout_mechanism_score": 0.8113791567298106,
     "development_false_discovery_rate": 0.0,
     "heldout_false_discovery_rate": 0.0,
     "development_correct_refusal_rate": 1.0,
@@ -25,31 +25,33 @@
   "admitted_runs": [
     {
       "model": "deepseek-v4-flash",
-      "seed": 43,
+      "seed": 51,
       "max_output_tokens": 16000,
-      "valid_proposal_count": 1,
-      "best_development_score": 0.0,
-      "heldout_mechanism_score": 0.0,
-      "development_false_discovery_rate": 1.0,
-      "heldout_false_discovery_rate": 1.0,
-      "development_correct_refusal_rate": 0.5,
+      "valid_proposal_count": 3,
+      "proposal_scores": [5.31891197752543e-12, 0.8009481900465465, 0.48432749242719214],
+      "best_development_score": 0.8009481900465465,
+      "heldout_mechanism_score": 0.4228241187897904,
+      "development_false_discovery_rate": 0.0,
+      "heldout_false_discovery_rate": 0.25,
+      "development_correct_refusal_rate": 1.0,
       "heldout_correct_refusal_rate": 0.5,
-      "development_discovery_coverage": 0.0,
-      "heldout_discovery_coverage": 0.0
+      "development_discovery_coverage": 1.0,
+      "heldout_discovery_coverage": 1.0
     },
     {
       "model": "deepseek-v4-pro",
-      "seed": 42,
-      "max_output_tokens": 8000,
-      "valid_proposal_count": 1,
-      "best_development_score": 0.0,
+      "seed": 52,
+      "max_output_tokens": 16000,
+      "valid_proposal_count": 3,
+      "proposal_scores": [0.0, 0.2970425372619238, 0.3534853716096414],
+      "best_development_score": 0.3534853716096414,
       "heldout_mechanism_score": 0.0,
-      "development_false_discovery_rate": 0.0,
-      "heldout_false_discovery_rate": 0.0,
-      "development_correct_refusal_rate": 1.0,
-      "heldout_correct_refusal_rate": 1.0,
-      "development_discovery_coverage": 0.0,
-      "heldout_discovery_coverage": 0.0
+      "development_false_discovery_rate": 0.3333333333333333,
+      "heldout_false_discovery_rate": 0.4,
+      "development_correct_refusal_rate": 0.0,
+      "heldout_correct_refusal_rate": 0.0,
+      "development_discovery_coverage": 1.0,
+      "heldout_discovery_coverage": 1.0
     }
   ],
   "excluded_protocol_runs": {
@@ -57,9 +59,10 @@
     "runs": [
       {"model": "deepseek-v4-flash", "seed": 41, "failure": "candidate_runtime_error_under_underspecified_noise_container"},
       {"model": "deepseek-v4-pro", "seed": 41, "failure": "candidate_runtime_error_under_underspecified_noise_container"},
-      {"model": "deepseek-v4-flash", "seed": 42, "failure": "syntactically_incomplete_candidate_under_8k_output_limit"}
+      {"model": "deepseek-v4-flash", "seed": 42, "failure": "syntactically_incomplete_candidate_under_8k_output_limit"},
+      {"model": "deepseek-v4-pro", "seed": 46, "result": "pre_freeze_fixed_origin_score_0.982356_triggered_joint_location_redesign"}
     ]
   },
-  "admission_result": "pass: both valid first proposals remain below the truth-blind reference",
+  "admission_result": "pass: both valid first proposals and both budget-three terminal scores remain below the truth-blind reference",
   "notes": "The source revision records the executable task used on ali; local DeepSeek compatibility configuration was uncommitted. This summary contains no prompt, generated program, endpoint, credential, API key, or run directory."
 }

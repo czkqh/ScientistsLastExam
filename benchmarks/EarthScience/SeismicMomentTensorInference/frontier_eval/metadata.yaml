@@ -10,4 +10,4 @@ eval_time_seconds: 30
 science_metric: active_seismic_moment_tensor_recovery_with_identifiability_refusal
 reference_baseline: one four-station P-wave survey followed by abstention
 reference_sota: nonlinear least-squares inversion with P/S amplitudes, depth and correct refusal on unsupported or rank-deficient worlds
-citation: "Aki and Richards 2002; Vavryčuk 2015, DOI 10.1016/j.epsl.2015.02.022"
+citation: "Pugh and White 2018, DOI 10.1785/0220170273; Krizova et al. 2013, DOI 10.1785/0120120097"

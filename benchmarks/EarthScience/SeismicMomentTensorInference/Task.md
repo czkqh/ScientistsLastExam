@@ -78,5 +78,6 @@ rectangular density bodies, whereas this task uses directional seismic radiation
 and a source-mechanism tensor. It is distinct from `Physics/PTAHellingsDowns`, which classifies
 long-baseline pulsar correlations rather than inverting a local earthquake source.
 
-References: Aki & Richards, *Quantitative Seismology* (2002), DOI `10.1111/j.1365-246X.1987.tb05275.x`;
-Vavryčuk, *Earth and Planetary Science Letters* (2015), DOI `10.1016/j.epsl.2015.02.022`.
+References: Pugh & White, *Seismological Research Letters* (2018), DOI
+`10.1785/0220170273`; Krizova, Zahradnik & Kiratzi, *BSSA* (2013), DOI
+`10.1785/0120120097`.

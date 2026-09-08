@@ -798,7 +798,7 @@ tasks:
       - doi:10.1063/1.1723844
   WavePropagation/SeismicMomentTensorInference:
     status: candidate
-    reason: new deterministic active P/S source-mechanism inversion over double-couple, null and isotropic worlds; candidates choose azimuthally diverse station surveys under an eight-unit budget and return a six-component tensor, depth and magnitude, while mechanism, attempted discovery, false discovery and correct refusal remain separate; the truth-blind bounded least-squares reference reaches 0.865/0.824 development/held-out with zero false discovery and complete refusal, while one valid thinking-disabled first proposal each from DeepSeek V4 Flash and Pro scores zero; retain as candidate pending server-held geometries, independent waveform recomputation and external seismology review
+    reason: new deterministic active P/S joint source-location and mechanism inversion over double-couple, null and isotropic worlds; candidates choose azimuthally diverse station surveys under an eight-unit budget and return horizontal location, a six-component tensor, depth and magnitude, while mechanism, attempted discovery, false discovery and correct refusal remain separate; the truth-blind bounded least-squares reference reaches 0.904/0.811 development/held-out with zero false discovery and complete refusal, a 192-strategy shortcut grid peaks at zero, and thinking-disabled DeepSeek Flash/Pro budget-three runs improve from near-zero first proposals to 0.801/0.353 terminal development scores; retain as candidate pending server-held geometries, independent waveform recomputation and external seismology review
     citation_ids:
-      - doi:10.1016/j.epsl.2015.02.022
-      - doi:10.1111/j.1365-246X.1987.tb05275.x
+      - doi:10.1785/0220170273
+      - doi:10.1785/0120120097

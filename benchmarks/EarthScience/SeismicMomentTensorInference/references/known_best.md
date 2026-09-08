@@ -15,22 +15,32 @@ remain separate. This is a reduced-order benchmark, not field deployment.
 The baseline spends one P-wave survey and abstains on every world, so combined score is 0. The
 reference performs two azimuthally diverse surveys, solves bounded nonlinear least squares,
 and abstains when the signal is null or the isotropic P-wave offset is inconsistent with the
-supported family. On the frozen executable revision it scores `0.864846` development and
-`0.824390` held-out, with zero false discovery and complete unsupported-world refusal on both
+supported family. On the frozen executable revision it scores `0.904004` development and
+`0.811379` held-out, with zero false discovery and complete unsupported-world refusal on both
 splits. The baseline scores `0.000000` on both splits.
 
 ## Ablations and shortcuts
 P-only fitting loses depth/magnitude separation; a single azimuth loses off-diagonal tensor
-components; ignoring arrival time loses depth. A fixed four-corner survey is inferior to
-adaptive radial coverage. Public procedural worlds require a future server-held split.
+components; ignoring arrival time loses location and depth. Both shipped refusal ablations score
+`0.000000`. The executable grid spans six constant focal mechanisms, eight depths and four
+amplitude thresholds (192 strategies); its best development score is `0.000000`. Public
+procedural worlds require a future server-held split.
 
 ## Model calibration
-Thinking-disabled `deepseek-v4-flash` (seed 43) and `deepseek-v4-pro` (seed 42) each produced one
-valid first proposal at budget one. Both scored `0.000000`, below the reference's `0.864846`.
-Earlier seed-41 draws and a Flash seed-42 draw are protocol diagnostics only: an underspecified
-`noise_std` container caused two runtime failures, then Flash generated syntactically incomplete
-code under an 8k output limit. The public container shape was fixed before the admitted draws;
-the Flash admitted draw used a local 16k output limit. See the compact experiment record.
+Thinking-disabled `deepseek-v4-flash` (seed 51) and `deepseek-v4-pro` (seed 52) each produced three
+valid proposals at budget three. Their first proposals score approximately zero. Flash improves
+to `0.800948` development and `0.422824` held-out; Pro improves to `0.353485` development and
+`0.000000` held-out. Both terminal scores remain below the reference's `0.904004`. A pre-freeze
+Pro draw reached `0.982356` when horizontal source location was fixed; this triggered the
+scientifically material joint-location redesign and is excluded from final performance evidence.
+See the compact experiment record.
+
+## Robustness and limitations
+The held-out split changes source locations, mechanisms, depths, magnitudes and noise draws. The
+Flash terminal candidate loses unsupported-source refusal under that shift, while the reference
+retains it, so the held-out axis is active. The homogeneous point-source model omits finite-fault
+rupture, attenuation, anisotropy, 3-D velocity structure and instrument response. Those limits,
+plus public procedural worlds, require server-held cases and independent waveform replication.
 
 ## Construction and review
 This fills the EarthScience x WavePropagation discovery/parameter-inversion gap and is distinct
