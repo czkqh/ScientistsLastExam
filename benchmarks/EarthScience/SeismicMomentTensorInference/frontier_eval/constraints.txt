@@ -1,0 +1,4 @@
+1) Edit only solution.py and export infer_source(station_bounds, wave_types, observe, budget_units).
+2) station_bounds is [[-300,300],[-300,300]] km; wave_types is ["P","S"]. observe(stations, wave_type) accepts 4-12 distinct [x_km,y_km] pairs and returns station_xy_km, wave_type, p_arrival_s, amplitude, noise_std, budget_cost, budget_used. Each request costs ceil(len(stations)/4); do not exceed budget_units=8.
+3) Return moment_tensor (six finite values in Mxx,Myy,Mzz,Mxy,Mxz,Myz order), positive depth_km and magnitude, confidence in [0,1], and abstain boolean. Abstention requires a zero tensor.
+4) NumPy/SciPy only, deterministic CPU, no network/process creation, and do not read verification/ or frontier_eval/.

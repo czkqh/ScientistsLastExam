@@ -796,3 +796,9 @@ tasks:
       - doi:10.1103/PhysRevLett.93.165501
       - doi:10.1016/0375-9601(74)90847-0
       - doi:10.1063/1.1723844
+  WavePropagation/SeismicMomentTensorInference:
+    status: candidate
+    reason: new deterministic active P/S source-mechanism inversion over double-couple, null, isotropic and rank-limited worlds; candidates choose azimuthally diverse station surveys under an eight-unit budget and return a six-component tensor, depth and magnitude, while mechanism, attempted discovery, false discovery and correct refusal remain separate; a bounded least-squares reference is included but no frontier calibration draw or external seismology review has yet been completed, so retain as candidate pending server-held geometries, independent waveform recomputation and domain review
+    citation_ids:
+      - doi:10.1016/j.epsl.2015.02.022
+      - doi:10.1111/j.1365-246X.1987.tb05275.x

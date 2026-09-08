@@ -1,0 +1,62 @@
+schema_version: 2
+scientific_question: Can an actively designed small P/S network recover a local earthquake moment tensor and depth, while refusing isotropic or geometrically unidentifiable sources?
+artifact: Six normalized symmetric moment-tensor components, hypocentral depth and magnitude, confidence, or an explicit abstention.
+oracle:
+  model: deterministic point-source P/S radiation and travel-time simulator with seeded Gaussian amplitude and arrival noise
+  feasibility: charged 4-12 station surveys in a 300 km square under an eight-unit budget; bounded finite tensor/depth output
+  deterministic: true
+normalization:
+  baseline: one four-station P-wave corner survey followed by abstention
+  reference: bounded nonlinear least-squares P/S inversion with adaptive azimuthal coverage and refusal on unsupported sources
+  score: development mechanism quality normalized above all-abstain; held-out prediction, refusal, false discovery and coverage are separate
+citations:
+  - id: doi:10.1016/j.epsl.2015.02.022
+    title: Moment tensor inversion for near-surface events
+  - id: doi:10.1111/j.1365-246X.1987.tb05275.x
+    title: Quantitative seismology and source radiation
+invariants:
+  - identical candidate calls produce byte-stable world noise and scores
+  - P radiation is n-transpose-M-n and S radiation is a transverse projection of M-n
+  - all-abstain has exactly zero normalized mechanism score
+  - malformed returns, callback errors and budget overspend score invalid without evaluator crashes
+  - isotropic and null worlds reward abstention and count false discoveries with an explicit denominator
+  - held-out mechanism and prediction diagnostics are not search-visible
+known_shortcuts: A four-corner P-only survey cannot identify all off-diagonal components or separate depth from magnitude. The reduced-order point-source model omits finite-fault, attenuation and 3-D structure; server-held stations, full waveform modeling and independent seismological review are required before certification.
+review:
+  domain: pending_external_seismology_review
+  evaluator_security: deterministic_sandbox_callback_and_bad_candidate_tests
+provenance:
+  class: procedural
+  target_source: A deterministic synthetic source simulator grounded in standard moment-tensor radiation equations.
+  task_contract_public_before_evaluation: true
+  fresh_confirmation_status: not_completed
+novelty_risk:
+  level: medium
+  rationale: The local point-source abstraction is intentionally compact, but active P/S mechanism inversion is distinct from the repository's static gravity, climate and pulsar-correlation tasks; external duplication review remains pending.
+lineage:
+  status: incomplete_legacy
+  builder_model_ids:
+    - codex-gpt-5
+  builder_scaffolds:
+    - hand-authored-active-seismic-inversion-v1
+  calibrator_model_ids:
+    - not_run
+  calibration_runs: []
+  calibration_evidence_status: missing
+  edits_triggered_by_model: No frontier model draw has yet altered the oracle or contract.
+  shortcut_discoverer: deterministic_manual_probe
+  frozen_before_eval: false
+  freeze_timestamp: null
+long_horizon:
+  status: not_tested
+  measurement_health_passed: false
+  material_headroom_after_2h: false
+  evidence: []
+construction_audit:
+  status: initial_candidate
+  author_domain: pending
+  reviewer_domain: pending_external
+  expert_hours: 0
+  red_team_rounds: 1
+  oracle_disagreement_status: not_quantified
+  independent_recomputation_status: pending

@@ -122,4 +122,5 @@ tasks:
   Exoplanets/RadialVelocityPlanets: {form: discovery, kind: parameter_inversion}
   Catalysis/CatalystDeactivationLab: {form: discovery, kind: parameter_inversion}
   Sensors/QuartzCrystalMicrobalanceLab: {form: discovery, kind: parameter_inversion}
+  WavePropagation/SeismicMomentTensorInference: {form: discovery, kind: parameter_inversion, note: active_P_S_moment_tensor_and_depth_inversion_not_static_gravity}
   Spectroscopy/NMRSpectrumFitting: {form: discovery, kind: parameter_inversion}
