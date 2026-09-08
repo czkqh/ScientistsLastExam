@@ -800,3 +800,10 @@ tasks:
       - doi:10.1103/PhysRevLett.93.165501
       - doi:10.1016/0375-9601(74)90847-0
       - doi:10.1063/1.1723844
+  Hydrology/AquiferPumpingInference:
+    status: candidate
+    reason: active multi-radius pumping-test inference recovers transmissivity and storativity under a finite observation budget and attributes leakage, recharge boundaries, or dual-porosity storage; retain pending server-held field curves, higher-fidelity radial-flow replication, repeated frontier calibration, and independent hydrogeology review
+    citation_ids:
+      - doi:10.1029/TR016i002p00519
+      - doi:10.1029/TR036i001p00095
+      - doi:10.3133/wsp1536E
