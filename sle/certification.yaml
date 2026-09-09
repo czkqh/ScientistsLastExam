@@ -802,7 +802,7 @@ tasks:
       - doi:10.1063/1.1723844
   Hydrology/AquiferPumpingInference:
     status: candidate
-    reason: active multi-radius pumping-test inference recovers transmissivity and storativity under a finite observation budget and attributes leakage, recharge boundaries, or dual-porosity storage; a truth-blind multi-model reference reaches 0.986/0.983 development/held out, a 192-strategy summary shortcut reaches 0.362/0.362, and thinking-disabled DeepSeek Flash/Pro first proposals reach 0.124/0.000 and 0.727/0.727 respectively; retain pending server-held field curves, higher-fidelity radial-flow replication, repeated controls, and independent hydrogeology review
+    reason: active multi-radius pumping-test inference recovers transmissivity and storativity under priced radius setup and attributes three publicly specified reduced-order alternatives; a truth-blind multi-model reference reaches 0.622/0.793 development/held out, a one-radius half-budget ablation reaches 0.000/0.193, and a 128-strategy confined-fit plus residual-threshold shortcut reaches 0.482/0.526; identifiers are world-independent digests, world order is deterministically shuffled, and both blanket abstention and never-refusing score zero; previous DeepSeek draws are historical after the pricing and scoring revision; retain pending current-revision model calibration, server-held field curves, higher-fidelity radial-flow replication, repeated controls, and independent hydrogeology review
     citation_ids:
       - doi:10.1029/TR016i002p00519
       - doi:10.1029/TR036i001p00095
